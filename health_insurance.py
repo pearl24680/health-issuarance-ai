@@ -3,12 +3,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 import os
-from openai import OpenAI
+from groq import Groq
 
-# ---------- PAGE CONFIG ----------
+# 🔑 ---------- ADD YOUR API KEY HERE ----------
+os.environ["GROQ_API_KEY"] = "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"
+
+# ---------- CONFIG ----------
 st.set_page_config(page_title="Health Insurance AI Pro", layout="centered")
 
-# ---------- LOAD MODEL (CACHED) ----------
+# ---------- LOAD MODEL ----------
 @st.cache_resource
 def load_model():
     df = pd.read_csv("https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv")
@@ -23,40 +26,31 @@ def load_model():
 
 model, df = load_model()
 
-# ---------- AI FUNCTION ----------
-def get_ai_advice(premium, age, bmi):
+# ---------- SESSION ----------
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "chat" not in st.session_state:
+    st.session_state.chat = []
+
+# ---------- AI ----------
+def chat_with_ai(user_input):
     try:
-        api_key = os.getenv("OPENAI_API_KEY")
-
-        # Agar API key nahi hai to crash nahi karega
-        if not api_key:
-            return "⚠️ AI disabled (API key not set in Streamlit Secrets)"
-
-        client = OpenAI(api_key=api_key)
-
-        prompt = f"""
-        You are a Health Insurance Advisor.
-
-        User Details:
-        Age: {age}
-        BMI: {bmi}
-        Premium: {premium}
-
-        Explain:
-        - Risk level
-        - Why premium is high/low
-        - Tips to reduce premium
-        """
+        api_key = os.getenv("GROQ_API_KEY")
+        client = Groq(api_key=api_key)
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
+            model="llama3-8b-8192",
+            messages=[
+                {"role": "system", "content": "You are a health insurance advisor."},
+                {"role": "user", "content": user_input}
+            ]
         )
 
         return response.choices[0].message.content
 
     except Exception as e:
-        return "⚠️ AI error (check API key or quota)"
+        return f"⚠️ Error: {e}"
 
 # ---------- UI ----------
 st.title("💊 Health Insurance AI Pro")
@@ -73,43 +67,58 @@ with col2:
 
 children = st.number_input("Children", 0, 5)
 
-# ---------- BUTTON ----------
+# ---------- PREDICT ----------
 if st.button("🚀 Predict & Analyze"):
-    
-    # Prediction
+
     pred = model.predict([[age, bmi, children]])[0]
 
-    # Premium
-    st.markdown("## 💰 Estimated Premium")
-    st.success(f"₹ {round(pred, 2)}")
+    risk_score = (bmi * 2 + age) / 2
 
-    # ---------- RISK ----------
-    risk = (bmi * 2 + age) / 2
-
-    st.markdown("## 🔥 Risk Score")
-    st.progress(min(int(risk), 100))
-
-    if risk < 30:
-        st.success("Low Risk ✅")
-    elif risk < 60:
-        st.warning("Medium Risk ⚠️")
+    if risk_score < 30:
+        risk_level = "Low"
+    elif risk_score < 60:
+        risk_level = "Medium"
     else:
-        st.error("High Risk 🚨")
+        risk_level = "High"
 
-    # ---------- GRAPH ----------
-    st.markdown("## 📊 Age vs Charges Graph")
+    user_data = {
+        "Age": age,
+        "BMI": bmi,
+        "Children": children,
+        "Premium": round(pred, 2),
+        "Risk": risk_level
+    }
 
+    st.session_state.history.append(user_data)
+
+    st.success(f"💰 Premium: ₹{round(pred, 2)}")
+    st.progress(min(int(risk_score), 100))
+    st.write(f"🔥 Risk Level: {risk_level}")
+
+    # Graph
     fig, ax = plt.subplots()
     ax.scatter(df['age'], df['charges'])
     ax.set_xlabel("Age")
     ax.set_ylabel("Charges")
-
     st.pyplot(fig)
 
-    # ---------- AI ----------
-    st.markdown("## 🤖 AI Advisor")
+# ---------- CHAT ----------
+st.markdown("## 🤖 Chat with AI")
 
-    with st.spinner("AI is analyzing..."):
-        advice = get_ai_advice(pred, age, bmi)
+user_input = st.chat_input("Ask anything about insurance...")
 
-    st.write(advice)
+if user_input:
+    st.session_state.chat.append(("User", user_input))
+    reply = chat_with_ai(user_input)
+    st.session_state.chat.append(("AI", reply))
+
+# Display chat
+for role, msg in st.session_state.chat:
+    if role == "User":
+        st.chat_message("user").write(msg)
+    else:
+        st.chat_message("assistant").write(msg)
+
+# ---------- HISTORY ----------
+st.markdown("## 📜 Prediction History")
+st.table(st.session_state.history)
