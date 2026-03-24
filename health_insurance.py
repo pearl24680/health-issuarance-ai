@@ -5,42 +5,58 @@ from sklearn.linear_model import LinearRegression
 import os
 from openai import OpenAI
 
-matplotlib.use('Agg')
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="Health Insurance AI Pro", layout="centered")
 
-# ---------- LOAD DATA ----------
-df = pd.read_csv("https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv")
+# ---------- LOAD MODEL (CACHED) ----------
+@st.cache_resource
+def load_model():
+    df = pd.read_csv("https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv")
+    
+    X = df[['age', 'bmi', 'children']]
+    y = df['charges']
 
-X = df[['age', 'bmi', 'children']]
-y = df['charges']
+    model = LinearRegression()
+    model.fit(X, y)
 
-model = LinearRegression()
-model.fit(X, y)
+    return model, df
 
-# ---------- OPENAI ----------
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+model, df = load_model()
 
+# ---------- AI FUNCTION ----------
 def get_ai_advice(premium, age, bmi):
-    prompt = f"""
-    You are a smart health insurance advisor.
+    try:
+        api_key = os.getenv("OPENAI_API_KEY")
 
-    Age: {age}
-    BMI: {bmi}
-    Premium: {premium}
+        # Agar API key nahi hai to crash nahi karega
+        if not api_key:
+            return "⚠️ AI disabled (API key not set in Streamlit Secrets)"
 
-    Give:
-    - Risk level
-    - Explanation
-    - Tips to reduce premium
-    """
+        client = OpenAI(api_key=api_key)
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
+        prompt = f"""
+        You are a Health Insurance Advisor.
 
-    return response.choices[0].message.content
+        User Details:
+        Age: {age}
+        BMI: {bmi}
+        Premium: {premium}
+
+        Explain:
+        - Risk level
+        - Why premium is high/low
+        - Tips to reduce premium
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return "⚠️ AI error (check API key or quota)"
 
 # ---------- UI ----------
 st.title("💊 Health Insurance AI Pro")
@@ -57,15 +73,17 @@ with col2:
 
 children = st.number_input("Children", 0, 5)
 
-# ---------- PREDICTION ----------
+# ---------- BUTTON ----------
 if st.button("🚀 Predict & Analyze"):
+    
+    # Prediction
     pred = model.predict([[age, bmi, children]])[0]
 
-    # Premium Card
+    # Premium
     st.markdown("## 💰 Estimated Premium")
     st.success(f"₹ {round(pred, 2)}")
 
-    # ---------- RISK SCORE ----------
+    # ---------- RISK ----------
     risk = (bmi * 2 + age) / 2
 
     st.markdown("## 🔥 Risk Score")
@@ -88,10 +106,10 @@ if st.button("🚀 Predict & Analyze"):
 
     st.pyplot(fig)
 
-    # ---------- AI CHAT ----------
+    # ---------- AI ----------
     st.markdown("## 🤖 AI Advisor")
 
-    with st.spinner("AI is thinking..."):
+    with st.spinner("AI is analyzing..."):
         advice = get_ai_advice(pred, age, bmi)
 
-    st.chat_message("assistant").write(advice)
+    st.write(advice)
