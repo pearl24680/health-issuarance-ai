@@ -5,6 +5,7 @@ from sklearn.linear_model import LinearRegression
 import os
 from openai import OpenAI
 
+matplotlib.use('Agg')
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="Health Insurance AI Pro", layout="centered")
 
