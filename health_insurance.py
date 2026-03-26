@@ -1,124 +1,117 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
-import os
-from groq import Groq
 
-# 🔑 ---------- ADD YOUR API KEY HERE ----------
-os.environ["GROQ_API_KEY"] = "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"
+# In-memory storage
+if "policies" not in st.session_state:
+    st.session_state.policies = {}
 
-# ---------- CONFIG ----------
-st.set_page_config(page_title="Health Insurance AI Pro", layout="centered")
+st.title("🏥 Health Insurance Management System")
 
-# ---------- LOAD MODEL ----------
-@st.cache_resource
-def load_model():
-    df = pd.read_csv("https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/insurance.csv")
-    
-    X = df[['age', 'bmi', 'children']]
-    y = df['charges']
+menu = st.sidebar.selectbox("Menu", [
+    "Add Policy",
+    "View Policies",
+    "Search Policy",
+    "Update Policy",
+    "Delete Policy",
+    "Analytics"
+])
 
-    model = LinearRegression()
-    model.fit(X, y)
+# Add Policy
+if menu == "Add Policy":
+    st.subheader("Add New Policy")
 
-    return model, df
+    pid = st.text_input("Policy ID")
+    name = st.text_input("Customer Name")
+    age = st.number_input("Age", min_value=1)
+    ptype = st.selectbox("Policy Type", ["Basic", "Premium", "Family"])
+    premium = st.number_input("Premium Amount", min_value=0)
+    claim = st.selectbox("Claim Status", ["Yes", "No"])
 
-model, df = load_model()
+    if st.button("Add Policy"):
+        if pid in st.session_state.policies:
+            st.error("Policy ID already exists!")
+        else:
+            st.session_state.policies[pid] = {
+                "Name": name,
+                "Age": age,
+                "Type": ptype,
+                "Premium": premium,
+                "Claim": claim
+            }
+            st.success("Policy added successfully!")
 
-# ---------- SESSION ----------
-if "history" not in st.session_state:
-    st.session_state.history = []
+# View Policies
+elif menu == "View Policies":
+    st.subheader("All Policies")
 
-if "chat" not in st.session_state:
-    st.session_state.chat = []
-
-# ---------- AI ----------
-def chat_with_ai(user_input):
-    try:
-        api_key = os.getenv("GROQ_API_KEY")
-        client = Groq(api_key=api_key)
-
-        response = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[
-                {"role": "system", "content": "You are a health insurance advisor."},
-                {"role": "user", "content": user_input}
-            ]
-        )
-
-        return response.choices[0].message.content
-
-    except Exception as e:
-        return f"⚠️ Error: {e}"
-
-# ---------- UI ----------
-st.title("💊 Health Insurance AI Pro")
-
-st.markdown("### Enter Your Details")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    age = st.slider("Age", 18, 60)
-
-with col2:
-    bmi = st.number_input("BMI", 10.0, 50.0)
-
-children = st.number_input("Children", 0, 5)
-
-# ---------- PREDICT ----------
-if st.button("🚀 Predict & Analyze"):
-
-    pred = model.predict([[age, bmi, children]])[0]
-
-    risk_score = (bmi * 2 + age) / 2
-
-    if risk_score < 30:
-        risk_level = "Low"
-    elif risk_score < 60:
-        risk_level = "Medium"
+    if st.session_state.policies:
+        df = pd.DataFrame.from_dict(st.session_state.policies, orient='index')
+        st.dataframe(df)
     else:
-        risk_level = "High"
+        st.warning("No policies found!")
 
-    user_data = {
-        "Age": age,
-        "BMI": bmi,
-        "Children": children,
-        "Premium": round(pred, 2),
-        "Risk": risk_level
-    }
+# Search Policy
+elif menu == "Search Policy":
+    st.subheader("Search Policy")
 
-    st.session_state.history.append(user_data)
+    pid = st.text_input("Enter Policy ID")
 
-    st.success(f"💰 Premium: ₹{round(pred, 2)}")
-    st.progress(min(int(risk_score), 100))
-    st.write(f"🔥 Risk Level: {risk_level}")
+    if st.button("Search"):
+        if pid in st.session_state.policies:
+            st.json(st.session_state.policies[pid])
+        else:
+            st.error("Policy not found!")
 
-    # Graph
-    fig, ax = plt.subplots()
-    ax.scatter(df['age'], df['charges'])
-    ax.set_xlabel("Age")
-    ax.set_ylabel("Charges")
-    st.pyplot(fig)
+# Update Policy
+elif menu == "Update Policy":
+    st.subheader("Update Policy")
 
-# ---------- CHAT ----------
-st.markdown("## 🤖 Chat with AI")
+    pid = st.text_input("Enter Policy ID")
 
-user_input = st.chat_input("Ask anything about insurance...")
+    if pid in st.session_state.policies:
+        data = st.session_state.policies[pid]
 
-if user_input:
-    st.session_state.chat.append(("User", user_input))
-    reply = chat_with_ai(user_input)
-    st.session_state.chat.append(("AI", reply))
+        name = st.text_input("Name", data["Name"])
+        age = st.number_input("Age", value=data["Age"])
+        ptype = st.selectbox("Type", ["Basic", "Premium", "Family"])
+        premium = st.number_input("Premium", value=data["Premium"])
+        claim = st.selectbox("Claim", ["Yes", "No"])
 
-# Display chat
-for role, msg in st.session_state.chat:
-    if role == "User":
-        st.chat_message("user").write(msg)
+        if st.button("Update"):
+            st.session_state.policies[pid] = {
+                "Name": name,
+                "Age": age,
+                "Type": ptype,
+                "Premium": premium,
+                "Claim": claim
+            }
+            st.success("Updated successfully!")
+
+# Delete Policy
+elif menu == "Delete Policy":
+    st.subheader("Delete Policy")
+
+    pid = st.text_input("Enter Policy ID")
+
+    if st.button("Delete"):
+        if pid in st.session_state.policies:
+            del st.session_state.policies[pid]
+            st.success("Deleted successfully!")
+        else:
+            st.error("Policy not found!")
+
+# Analytics
+elif menu == "Analytics":
+    st.subheader("Analytics")
+
+    if st.session_state.policies:
+        df = pd.DataFrame.from_dict(st.session_state.policies, orient='index')
+
+        st.write("Policy Count by Type:")
+        st.write(df["Type"].value_counts())
+
+        st.write("Average Premium:", df["Premium"].mean())
+        st.write("Max Premium:", df["Premium"].max())
+
     else:
-        st.chat_message("assistant").write(msg)
-
-# ---------- HISTORY ----------
-st.markdown("## 📜 Prediction History")
-st.table(st.session_state.history)
+        st.warning("No data available!")
