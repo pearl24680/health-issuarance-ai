@@ -1,0 +1,5 @@
+services:
+  - type: web
+    name: pearl-health-assistant
+    env: docker
+    plan: free

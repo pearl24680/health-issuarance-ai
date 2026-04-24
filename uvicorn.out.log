@@ -1,0 +1,64 @@
+INFO:     127.0.0.1:56352 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56352 - "GET /assets/index-kAZ5-ddU.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60426 - "GET /assets/index-B5qkYXiV.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60426 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50639 - "GET /assets/index-kAZ5-ddU.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50640 - "GET /assets/index-B5qkYXiV.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55762 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55762 - "GET /assets/index-kAZ5-ddU.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55762 - "GET /assets/index-B5qkYXiV.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62127 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62127 - "GET /assets/index-DUwsHfQh.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58013 - "GET /assets/index-BO962b9C.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64124 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58327 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58327 - "GET /assets/index-C4F76yLb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58861 - "GET /assets/index-BO962b9C.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55276 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50605 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50605 - "GET /assets/index-C4F76yLb.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59433 - "GET /assets/index-BO962b9C.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60871 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62360 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62360 - "GET /assets/index-DY_Mss6d.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52759 - "GET /assets/index-B5qkYXiV.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51368 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51368 - "GET /assets/index-DY_Mss6d.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59864 - "GET /assets/index-B5qkYXiV.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59864 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56987 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57690 - "GET /assets/index-B9LXKAb1.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56987 - "GET /assets/index-qDDmnfNi.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55638 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55638 - "GET /assets/index-ns16n3iC.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63039 - "GET /assets/index-Cw-Cxai2.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62233 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57856 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57856 - "GET /assets/index-ns16n3iC.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57406 - "GET /assets/index-Cw-Cxai2.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51826 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53055 - "GET /assets/index-ovU2ICMi.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51826 - "GET /assets/index-DeUynMXn.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56835 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56835 - "GET /assets/index-DeUynMXn.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55114 - "GET /assets/index-ovU2ICMi.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58954 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62661 - "GET /assets/index-CEtVOQ23.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58954 - "GET /assets/index-Bc89OMmd.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54270 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52151 - "POST /predict/batch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52151 - "POST /predict/batch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52151 - "POST /predict/batch HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59025 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52263 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49916 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49916 - "GET /assets/index-CAwfRf5Q.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50791 - "GET /assets/index-CEtVOQ23.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52617 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52617 - "GET /assets/index-CoGkG3qX.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62256 - "GET /assets/index-DlRSTC5y.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62297 - "POST /predict HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64634 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54109 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54109 - "GET /assets/index-CoGkG3qX.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57880 - "GET /assets/index-DlRSTC5y.css HTTP/1.1" 304 Not Modified
